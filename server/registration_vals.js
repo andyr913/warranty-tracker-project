@@ -49,4 +49,39 @@ function checkPassword(password) {
     return {valid: true};
 }
 
-module.exports = {checkName, checkEmail, checkPassword};
+
+// checks all registration validations together
+// returns an errors object upon failure, or user object upon success
+function checkRegistration(firstName, lastName, email, password) {
+    const errors = {};
+
+    // runs the above functions for each param
+    const nameCheck = checkName(firstName, lastName);
+    const emailCheck = checkEmail(email);
+    const passwordCheck = checkPassword(password);
+
+    // error msgs added to errors object for each failed validation
+    if (!nameCheck.valid)
+        errors.name = nameCheck.error;
+    if (!emailCheck.valid)
+        errors.email = emailCheck.error;
+    if (!passwordCheck.valid)
+        errors.password = passwordCheck.error;
+
+    // if any check failed, returns invalid and errors object
+    if (Object.keys(errors).length > 0)
+        return {valid: false, errors};
+
+    // otherwise, returns valid and new user object
+    return {
+        valid: true, 
+        user: {
+            first_name: firstName.trim(), 
+            last_name: lastName.trim(), 
+            email: email.trim().toLowerCase(),
+            password: password
+        }
+    };
+}
+
+module.exports = {checkName, checkEmail, checkPassword, checkRegistration};
