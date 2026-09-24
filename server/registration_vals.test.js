@@ -86,3 +86,78 @@ describe('checkName', () => {
         expect(checkName(' ' + 'A'.repeat(50) + ' ', ' ' + 'R'.repeat(50) + ' ').valid).toBe(true);
     });
 });
+
+describe('checkEmail', () => {
+    // UT-14
+    test('Error message when email is empty', () => {
+        const result = checkEmail('');
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Required field');
+    });
+
+    // UT-15
+    test('Error message when email is whitespace only', () => {
+        expect(checkEmail('   ').valid).toBe(false);
+        expect(result.error).toBe('Required field');
+    });
+
+    // UT-16
+    test('Error message when email is undefined', () => {
+        expect(checkEmail(undefined).valid).toBe(false);
+        expect(result.error).toBe('Required field');
+    });
+
+    // UT-17
+    test('Error message when email is longer than 300 chars', () => {
+        expect(checkEmail('A'.repeat(301)).valid).toBe(false);
+        expect(result.error).toBe('Required field');
+    });
+
+    // UT-18
+    test('Emails with exactly 300 chars are accepted', () => {
+        expect(checkEmail('A'.repeat(290) + '@abcdef.ca').valid).toBe(true);
+    });
+
+    // UT-19
+    test('Emails with exactly 300 chars and padded with extra white space are accepted', () => {
+        expect(checkEmail('A'.repeat(290) + '@abcdef.ca').valid).toBe(true);
+    });
+
+    // UT-20
+    test('Error message when email has no domain value', () => {
+        const result = checkEmail('andres@ca');
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe("Invalid email format. Must be: 'username@domain.tld'");
+    });
+
+    // UT-21
+    test('Error message when email has no @ symbol', () => {
+        const result = checkEmail('andresmohawk.ca');
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe("Invalid email format. Must be: 'username@domain.tld'");
+    });
+
+    // UT-22
+    test('Error message when email has no username value', () => {
+        const result = checkEmail('@mohawk.ca');
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe("Invalid email format. Must be: 'username@domain.tld'");
+    });
+
+    // UT-23
+    test('Error message when email has a space', () => {
+        const result = checkEmail('andres rosas@mohawk.ca');
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe("Invalid email format. Must be: 'username@domain.tld'");
+    });
+
+    // UT-24
+    test('Valid email is accepted', () => {
+        expect(checkEmail('andres@mohawk.ca').valid).toBe(true);
+    });
+
+    // UT-25
+    test('Accepts a valid email padded with whitespace', () => {
+        expect(checkEmail('  andres@example.com  ').valid).toBe(true);
+    });
+});
