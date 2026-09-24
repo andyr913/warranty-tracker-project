@@ -9,16 +9,18 @@ function checkName(firstName, lastName) {
     if (!lastName || lastName.trim().length === 0)
         return {valid: false, error: "Please enter last name"};
     if (firstName.trim().length > 50 || lastName.trim().length > 50)
-        return {valid: false, error: "First and last name must each be 50 or fewer characters"};
+        return {valid: false, error: "First and last name cannot be longer than 50 chars each"};
     
     return {valid: true};
 }
 
 // email validation
 function checkEmail(email) {
-    // checks for empty email field
+    // checks for empty email or too long
     if (!email || email.trim().length === 0)
         return {valid: false, error: "Required field"};
+    if (email.trim().length > 300)
+        return {valid: false, error: "Email cannot be longer than 300 chars"};
     // checks for valid email format
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
         return {valid: false, error: "Invalid email format. Must be: 'username@domain.tld'"};
