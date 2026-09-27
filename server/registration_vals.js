@@ -2,12 +2,14 @@
 
 // full name validation
 function checkName(firstName, lastName) {
+    // checks for empty fields
     if ((!firstName || firstName.trim().length === 0) && (!lastName || lastName.trim().length === 0))
         return {valid: false, error: "Please enter first and last name"};
     if (!firstName || firstName.trim().length === 0)
         return {valid: false, error: "Please enter first name"};
     if (!lastName || lastName.trim().length === 0)
         return {valid: false, error: "Please enter last name"};
+    // checks for name too long
     if (firstName.trim().length > 50 || lastName.trim().length > 50)
         return {valid: false, error: "First and last name cannot be longer than 50 chars each"};
     
