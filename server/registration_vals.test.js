@@ -48,7 +48,7 @@ describe('checkName', () => {
     test('Error message when first name is over 50 characters', () => {
         const result = checkName('a'.repeat(51), 'Rosas');
         expect(result.valid).toBe(false);
-        expect(result.error).toBe('First and last name must each be 50 or fewer characters');
+        expect(result.error).toBe('First and last name cannot be longer than 50 chars each');
     });
     // UT-09
     test('Error message when last name is over 50 characters', () => {
@@ -238,7 +238,7 @@ describe('checkRegistration', () => {
         expect(result.user).toEqual({
             first_name: 'Andres',
             last_name: 'Rosas',
-            email: 'andres@example.com',
+            email: 'andres@mohawk.ca',
             password: 'Password1!'
         });
     });
