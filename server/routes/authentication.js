@@ -5,6 +5,9 @@ const express = require('express');
 const bcrypt = require('bcryptjs'); // https://www.npmjs.com/package/bcryptjs
 const pool = require('../db');
 const {checkRegistration} = require('../registration_vals');
+const jwt = require('jsonwebtoken'); // https://www.npmjs.com/package/jsonwebtoken
+
+require('dotenv').config();
 
 const router = express.Router();
 
@@ -53,7 +56,7 @@ router.post('/login', async (req, res) => {
         // queries for a user in the DB with the same email as login input
         const dbResult = await pool.query(
             "SELECT * FROM users WHERE email = $1", 
-            [email.trim.toLowerCase()]
+            [email.trim().toLowerCase()]
         );
         const user = dbResult.rows[0];
         
@@ -64,13 +67,51 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({error: "Invalid email or password. Please try again."});
         // if user has entered the wrong password 5 times, returns locked error
         if (user.failed_pw_count >= 5)
-            return res.status(423).json(
-                "Account locked due to 5 consecutive invalid password attempts. " +
+            return res.status(423).json({
+                error: "Account locked due to 5 consecutive invalid password attempts. " +
                 "Please contact an administrator to regain access."
-            );
+            });
         // if user account is disabled, returns forbidden error
         if (!user.is_active)
-            return res.status(403).json("This account is inactive and cannot be accessed.");
+            return res.status(403).json({error: "This account is inactive and cannot be accessed."});
+
+        // returns boolean
+        const comparePw = await bcrypt.compare(password, user.password_hash);
+
+        // if user input does not match DB hash, failed_pw_count for that user is incremented +1
+        if (!comparePw) {
+            await pool.query(
+                `UPDATE users SET failed_pw_count = failed_pw_count + 1, last_updated_time = NOW()
+                 WHERE user_id = $1`,
+                [user.user_id]
+            );
+            return res.status(401).json({error: "Invalid email or password. Please try again."});
+        }
+
+        // if user input is successful, failed_pw_count is reset
+        await pool.query(
+            "UPDATE users SET failed_pw_count = 0, last_updated_time = NOW() WHERE user_id = $1", 
+            [user.user_id]);
+
+        // creates jwt authentication token using user details and jwt secret
+        const token = jwt.sign(
+            {user_id: user.user_id, email: user.email, user_role: user.user_role},
+            process.env.JWT_SECRET,
+            {expiresIn: '1h'}
+        );
+
+        // if login is successful, user details and auth token are returned to client
+        return res.json({
+            user: {
+                user_id: user.user_id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                user_role: user.user_role
+            },
+            token: token
+        }
+        );
     } catch (error) {
         // otherwise returns generic server error
         return res.status(500).json({error: 'Login failed. Please try again.'})
