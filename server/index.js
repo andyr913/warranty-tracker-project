@@ -11,6 +11,9 @@ app.use(cors());
 // parses JSON request bodies into req.body
 app.use(express.json());
 
+// imports authentication routes and maps them under '/api/auth'
+app.use('/api/auth', require('./routes/authentication'));
+
 // temporary health check to confirm connection is working
 app.get('/api/health', async (req, res) => {
   try {
