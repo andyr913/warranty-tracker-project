@@ -13,7 +13,6 @@ app.use(express.json());
 
 // imports authentication routes and maps them under '/api/auth'
 app.use('/api/auth', require('./routes/authentication'));
-app.use('/api/auth', require('./routes/login'));
 
 // temporary health check to confirm connection is working
 app.get('/api/health', async (req, res) => {

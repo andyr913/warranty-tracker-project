@@ -49,9 +49,9 @@ router.post('/login', async (req, res) => {
     const {email, password} = req.body;
 
     // returns empty field errors
-    if (!email) return res.status(400).json({error: "Please enter email."})
-    if (!password) return res.status(400).json({error: "Please enter password."})
-
+    if (!email || !password) 
+        return res.status(400).json({error: "Please enter email and password."})
+    
     try {
         // queries for a user in the DB with the same email as login input
         const dbResult = await pool.query(
