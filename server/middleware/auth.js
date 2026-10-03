@@ -24,5 +24,13 @@ function requireAuth(req, res, next) {
     }
 }
 
-module.exports = {requireAuth};
+// verifies current user has admin role
+// must run after requireAuth to set req.user which is used in this function
+function requireAdmin(req, res, next) {
+    // allows next middleware to run if user is admin, otherwise returns error
+    if (req.user.user_role === "admin") next();
+    else return res.status(403).json({error: 'Unauthorized request'});
+}
+
+module.exports = {requireAuth, requireAdmin};
 
