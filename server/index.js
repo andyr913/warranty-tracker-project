@@ -14,17 +14,17 @@ app.use(express.json());
 // imports authentication routes and maps them under '/api/auth'
 app.use('/api/auth', require('./routes/authentication'));
 
-// temporary health check to confirm connection is working
-app.get('/api/health', async (req, res) => {
-  try {
-    // queries DB and sends back the result
-    const result = await pool.query('SELECT COUNT(*) FROM categories');
-    res.json({ status: 'ok', categories: result.rows[0].count });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database connection failed' });
-  }
-});
+// // temporary health check to confirm connection is working
+// app.get('/api/health', async (req, res) => {
+//   try {
+//     // queries DB and sends back the result
+//     const result = await pool.query('SELECT COUNT(*) FROM categories');
+//     res.json({ status: 'ok', categories: result.rows[0].count });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Database connection failed' });
+//   }
+// });
 
 // loads port number for app to listen on
 const PORT = process.env.PORT || 3001;
