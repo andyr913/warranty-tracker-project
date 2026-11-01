@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../AuthContext';
 
-const api_url = 'http://localhost:3001/api/auth/login';
+const api_url = '/api/auth/login';
 
 function Login() {
     // tracks the state of input fields

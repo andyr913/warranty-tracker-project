@@ -2,7 +2,7 @@
 import {useState} from 'react';
 import {useNavigate, Link} from 'react-router-dom';
 
-const api_url = 'http://localhost:3001/api/auth/register';
+const api_url = '/api/auth/register';
 
 function Register() {
     // tracks the state of each input field
