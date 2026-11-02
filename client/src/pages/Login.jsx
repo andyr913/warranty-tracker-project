@@ -1,6 +1,6 @@
 // Login page component
 import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
 import {useAuth} from '../AuthContext';
 
 const api_url = '/api/auth/login';
@@ -74,7 +74,7 @@ function Login() {
                 {error && <p style = {{color: 'red'}}>{error}</p>}
                 <button type = "submit">Log in</button>
             </form>
-
+            <p>No account? <Link to = "/register">Register here</Link></p>
         </div>
     );
 }
