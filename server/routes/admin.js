@@ -36,6 +36,10 @@ router.delete('/users/:id', async (req, res) => {
     if (!Number.isInteger(userId)) 
         return res.status(400).json({error: 'Invalid ID'});
 
+    // error if admin tries deleting own account
+    if (userId === req.user.user_id)
+        return res.status(400).json({error: "Cannot delete own admin account."})
+
     try {
         // tries to delete user from DB and return user ID and email
         const dbResult = await pool.query(
