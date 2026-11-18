@@ -95,4 +95,32 @@ router.post('/users/:id/reset-password', async (req, res) => {
 
 });
 
+// route to unlock a locked account (failed password attempt limit)
+router.post('/users/:id/unlock', async (req, res) => {
+    // the ID of the user to unlock
+    const userId = Number(req.params.id);
+
+    // checks that user ID is a valid integer
+    if (!Number.isInteger(userId)) 
+        return res.status(400).json({error: 'Invalid ID'});
+
+    try {
+        const dbResult = await pool.query(
+            `UPDATE users
+            SET failed_pw_count = 0, last_updated_time = NOW()
+            WHERE user_id = $1
+            RETURNING user_id, email, failed_pw_count`,
+            [userId]
+        )
+
+        if (!dbResult.rows[0])
+            return res.status(404).json({error: 'User not found.'});
+
+        return res.json({message: 'Account successfully unlocked.', user: dbResult.rows[0]});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({error: 'Unable to unlock account. Please try again.'});
+    }
+});
+
 module.exports = router;
