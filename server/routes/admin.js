@@ -57,5 +57,42 @@ router.delete('/users/:id', async (req, res) => {
     }
 });
 
+// route to reset a user's password
+router.post('/users/:id/reset-password', async (req, res) => {
+    // the ID of the user to update
+    const userId = Number(req.params.id);
+
+    // checks that user ID is a valid integer
+    if (!Number.isInteger(userId)) 
+        return res.status(400).json({error: 'Invalid ID'});
+
+    // gets and validates new password
+    const {new_password} = req.body;
+    const passwordCheck = checkPassword(new_password);
+
+    if (!passwordCheck.valid)
+        return res.status(400).json({errors: {new_password: passwordCheck.error}});
+
+    try {
+        // generates new hash and updates DB
+        const newHash = await bcrypt.hash(new_password, 10);
+        const dbResult = await pool.query(
+            `UPDATE users
+            SET password_hash = $1, failed_pw_count = 0, last_updated_time = NOW()
+            WHERE user_id = $2
+            RETURNING user_id, email`,
+            [newHash, userId]
+        );
+
+        if (!dbResult.rows[0])
+            return res.status(404).json({error: 'User not found.'});
+
+        return res.json({message: 'Password successfully reset.', user: dbResult.rows[0]});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({error: 'Unable to reset password. Please try again.'});
+    }
+
+});
 
 module.exports = router;
