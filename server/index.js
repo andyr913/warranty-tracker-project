@@ -17,6 +17,8 @@ app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/user', require('./routes/users'));
 // imports admin routes and maps them under '/api/admin'
 app.use('/api/admin', require('./routes/admin'));
+// imports category routes and maps them under '/api/categories'
+app.use('/api/categories', require('./routes/categories'));
 
 // temporary health check to confirm connection is working
 app.get('/api/health', async (req, res) => {
