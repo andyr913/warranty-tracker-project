@@ -123,4 +123,36 @@ router.post('/users/:id/unlock', async (req, res) => {
     }
 });
 
+// route to enable/disable a user account
+router.patch('/users/:id/status', async (req, res) => {
+    const userId = Number(req.params.id);
+    const {is_active} = req.body;
+
+    if (!Number.isInteger(userId))
+        return res.status(400).json({error: 'Invalid value'});
+    if (typeof is_active !== 'boolean')
+        return res.status(400).json({error: 'Invalid value'});
+
+    // stops admin from disabling their own account
+    if (userId === req.user.user_id)
+        return res.status(400).json({error: "Cannot disable own admin account."});
+
+    try {
+        const dbResult = await pool.query(
+            `UPDATE users SET is_active = $1, last_updated_time = NOW()
+             WHERE user_id = $2
+             RETURNING user_id, email, is_active`,
+            [is_active, userId]
+        );
+
+        if (!dbResult.rows[0])
+            return res.status(404).json({error: 'User not found.'});
+
+        return res.json({message: 'Account status updated.', user: dbResult.rows[0]});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({error: 'Unable to update account status. Please try again.'});
+    }
+});
+
 module.exports = router;
