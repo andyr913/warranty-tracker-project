@@ -19,6 +19,8 @@ app.use('/api/user', require('./routes/users'));
 app.use('/api/admin', require('./routes/admin'));
 // imports category routes and maps them under '/api/categories'
 app.use('/api/categories', require('./routes/categories'));
+// imports asset routes and maps them under '/api/assets'
+app.use('/api/assets', require('./routes/assets'));
 
 // temporary health check to confirm connection is working
 app.get('/api/health', async (req, res) => {
