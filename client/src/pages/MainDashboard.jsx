@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import {useAuth} from '../AuthContext';
 import NavBar from '../components/NavBar';
 
-const assets_url = 'http://localhost:3001/api/assets';
+const assets_url = '/api/assets';
 
 function MainDashboard() {
     // gets logged in user from saved context
