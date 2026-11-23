@@ -3,6 +3,8 @@ import React from 'react';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import MainDashboard from './pages/MainDashboard';
+import Assets from './pages/Assets';
+import NewAsset from './pages/NewAsset';
 
 import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import {useAuth} from './AuthContext';
@@ -24,6 +26,8 @@ function App() {
           path = "/dashboard" 
           element = {user ? <MainDashboard/> : <Navigate to = "/login" replace/>}
         />
+        <Route path="/assets" element={user ? <Assets/> : <Navigate to="/login" replace/>}/>
+        <Route path="/assets/new" element={user ? <NewAsset/> : <Navigate to="/login" replace/>}/>
       </Routes>
     </BrowserRouter>
   )
